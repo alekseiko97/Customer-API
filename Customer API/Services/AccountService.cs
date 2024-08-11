@@ -6,19 +6,34 @@ namespace Customer_API.Services
     {
         private readonly ApplicationDbContext _context = context;
 
-        public Task AddTransactionAsync(int accountId, Transaction transaction)
+        public async Task AddTransactionAsync(int accountId, Transaction transaction)
         {
-            throw new NotImplementedException();
+            var account = await _context.Accounts.FindAsync(accountId) ?? throw new Exception($"Account not found for id: {accountId}");
+
+            account.Balance += transaction.Amount;
+            _context.Transactions.Add(transaction);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<Account> CreateAccountAsync(int customerId, decimal initialCredit)
+        public async Task<Account> CreateAccountAsync(int customerId, decimal initialCredit)
         {
-            throw new NotImplementedException();
+            var account = new Account { Balance = initialCredit };
+            _context.Accounts.Add(account);
+            await _context.SaveChangesAsync();
+
+            if (initialCredit > 0)
+            {
+                var transaction = new Transaction { Amount = initialCredit, Timestamp = DateTime.Now };
+                _context.Transactions.Add(transaction);
+                await _context.SaveChangesAsync();
+            }
+
+            return account;
         }
 
-        public Task<Account> GetAccountAsync(int accountId)
+        public async Task<Account> GetAccountAsync(int accountId)
         {
-            throw new NotImplementedException();
+            return await _context.Accounts.FindAsync(accountId);
         }
     }
 }
