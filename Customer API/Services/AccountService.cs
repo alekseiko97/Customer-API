@@ -1,4 +1,5 @@
 ﻿using Customer_API.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Customer_API.Services
 {
@@ -17,7 +18,10 @@ namespace Customer_API.Services
 
         public async Task<Account> CreateAccountAsync(int customerId, decimal initialCredit)
         {
-            var account = new Account { Balance = initialCredit };
+            var account = new Account { Balance = initialCredit};
+
+            var user = _context.Users.FirstOrDefaultAsync(u => u.ID == customerId);
+            
             _context.Accounts.Add(account);
             await _context.SaveChangesAsync();
 

@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public decimal Balance { get; set; }
-        public List<Transaction> Transactions = new List<Transaction>();
+        public User User { get; set; }
+        public List<Transaction> Transactions = [];
     }
 }

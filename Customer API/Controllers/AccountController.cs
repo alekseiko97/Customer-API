@@ -9,16 +9,25 @@ namespace Customer_API.Controllers
     {
         private readonly IAccountService _accountService = accountService;
 
-        [HttpPost]
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="initialBalance"></param>
+        /// <returns></returns>
+        [HttpPost]   
         public async Task<IActionResult> CreateAccount([FromQuery] int customerId, [FromQuery] decimal initialBalance)
         {
-            throw new NotImplementedException();
+            var account = await _accountService.CreateAccountAsync(customerId, initialBalance);
+            return CreatedAtAction(nameof(GetAccount), new { id = account.Id, account });
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAccount(int id)
         {
-            throw new NotImplementedException();
+            var account = await _accountService.GetAccountAsync(id);
+            if (account == null) return NotFound();
+            return Ok(account);
         }
     }
 }

@@ -4,6 +4,8 @@ namespace Customer_API.Services
 {
     public interface IUserService 
     {
-        Task<User> GetUserInfoAsync(int customerId);
+        Task<User> GetUserInfoAsync(int id);
+        Task<IEnumerable<User>> GetAllUsersAsync();
+        Task<User> CreateUserAsync(string name, string surname);
     }
 }
