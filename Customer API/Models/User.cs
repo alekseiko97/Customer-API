@@ -6,6 +6,6 @@
         public string Name { get; set; }
         public string Surname { get; set; }
         public decimal Balance { get; set; }
-        public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
+        public List<Account> Accounts { get; set; } = new List<Account>(); 
     }
 }

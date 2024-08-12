@@ -1,7 +1,9 @@
 using Customer_API;
+using Customer_API.Models;
 using Customer_API.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Collections.Generic;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +31,12 @@ builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IUserService, UserService>();
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    SeedData(dbContext);
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -43,3 +51,33 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+static void SeedData(ApplicationDbContext context)
+{
+    var user1 = new User { Name = "John", Surname = "Doe" };
+    var user2 = new User { Name = "Jane", Surname = "Smith" };
+
+    var account1 = new Account { Balance = 1000};
+    var account2 = new Account { Balance = 500 };
+    var account3 = new Account { Balance = 1500 };
+    
+    user1.Accounts.Append(account1);
+    user2.Accounts.Append(account2);
+    user1.Accounts.Append(account3);
+
+    var transaction1 = new Transaction { Amount = 500, Timestamp = DateTime.UtcNow };
+    var transaction2 = new Transaction { Amount = 200, Timestamp = DateTime.UtcNow };
+    var transaction3 = new Transaction { Amount = 300, Timestamp = DateTime.UtcNow };
+    var transaction4 = new Transaction { Amount = 100, Timestamp = DateTime.UtcNow };
+
+    account1.Transactions.Add(transaction1);
+    account1.Transactions.Add(transaction2);
+    account2.Transactions.Add(transaction3);
+    account3.Transactions.Add(transaction4);
+
+    context.Accounts.AddRange(account1, account2, account3);
+    context.Users.AddRange(user1, user2);
+    context.Transactions.AddRange(transaction1, transaction2, transaction3, transaction4);
+    
+    context.SaveChanges(); 
+}
