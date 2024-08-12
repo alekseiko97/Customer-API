@@ -20,7 +20,7 @@ namespace Customer_API.Controllers
         public async Task<IActionResult> CreateAccount([FromQuery] int customerId, [FromQuery] decimal initialBalance)
         {
             var account = await _accountService.CreateAccountAsync(customerId, initialBalance);
-            return Ok(account);
+            return CreatedAtAction(nameof(GetAccount), new { id = account.Id }, account);
         }
 
         /// <summary>

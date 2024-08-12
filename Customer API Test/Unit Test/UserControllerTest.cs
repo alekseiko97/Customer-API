@@ -1,6 +1,6 @@
 namespace Customer_API_Test
 {
-    public class Tests
+    public class UserControllerTest
     {
         [SetUp]
         public void Setup()
