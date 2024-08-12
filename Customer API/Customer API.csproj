@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Customer_API</RootNamespace>
+    <DocumentationFile>bin\Debug\net8.0\Customer API.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

@@ -10,6 +10,11 @@ namespace Customer_API.Controllers
     {
         private readonly IUserService _userService = userService;
         
+        /// <summary>
+        /// Get existing user/customer by id
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
         [HttpGet("{customerId}")]
         public async Task<IActionResult> GetUser(int customerId)
         {
@@ -23,6 +28,12 @@ namespace Customer_API.Controllers
             return Ok(user);
         }
 
+        /// <summary>
+        /// Create new user 
+        /// </summary>
+        /// <param name="firstName"></param>
+        /// <param name="lastName"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromQuery] string firstName, [FromQuery] string lastName)
         {
@@ -33,7 +44,7 @@ namespace Customer_API.Controllers
 
             var user = await _userService.CreateUserAsync(firstName, lastName);
 
-            return CreatedAtAction(nameof(GetUser), new { id = user.ID }, user);
+            return CreatedAtAction(nameof(GetUser), new { customerId = user.ID }, user);
         }
     }
 }

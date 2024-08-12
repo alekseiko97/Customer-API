@@ -10,7 +10,7 @@ namespace Customer_API.Controllers
         private readonly IAccountService _accountService = accountService;
 
         /// <summary>
-        /// 
+        /// Create new account for existing user
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="initialBalance"></param>
@@ -22,6 +22,11 @@ namespace Customer_API.Controllers
             return CreatedAtAction(nameof(GetAccount), new { id = account.Id, account });
         }
 
+        /// <summary>
+        /// Get an account by accountId
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAccount(int id)
         {
