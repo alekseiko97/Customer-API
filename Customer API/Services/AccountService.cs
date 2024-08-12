@@ -26,7 +26,6 @@ namespace Customer_API.Services
             var account = new Account
             {
                 Balance = initialCredit,
-                //User = user // navigation property
             };
 
             // add the account to the user's collection of accounts
