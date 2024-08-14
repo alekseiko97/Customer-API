@@ -6,7 +6,6 @@ namespace Customer_API.Services
     {
         Task<Account> CreateAccountAsync(int customerId, decimal initialCredit);
         Task<Account> GetAccountAsync(int accountId);
-        Task AddTransactionAsync(int accountId, Transaction transaction);
         Task<IEnumerable<Transaction>> GetAllTransactions(int accountId);
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Customer_API_Test
 {
-    internal class UserIntegrationTest
+    public class UserServiceTest
     {
     }
 }

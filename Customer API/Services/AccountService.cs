@@ -3,30 +3,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Customer_API.Services
 {
-    public class AccountService(ApplicationDbContext context) : IAccountService
+    public class AccountService(ApplicationDbContext context, ITransactionService transactionService) : IAccountService
     {
         private readonly ApplicationDbContext _context = context;
-
-        public async Task AddTransactionAsync(int accountId, Transaction transaction)
-        {
-            var account = await _context.Accounts.FindAsync(accountId) ?? throw new Exception($"Account not found for id: {accountId}");
-
-            account.Balance += transaction.Amount;
-            _context.Transactions.Add(transaction);
-            await _context.SaveChangesAsync();
-        }
+        private readonly ITransactionService _transactionService = transactionService;
 
         public async Task<Account> CreateAccountAsync(int customerId, decimal initialCredit)
         {
+            // get user by customerId
             var user = await _context.Users
                 .Include(u => u.Accounts)
                 .SingleOrDefaultAsync(u => u.ID == customerId) ?? throw new ArgumentException("User not found", nameof(customerId));
 
             // create a new account
-            var account = new Account
-            {
-                Balance = initialCredit,
-            };
+            var account = new Account { Balance = initialCredit };
 
             // add the account to the user's collection of accounts
             user.Accounts.Add(account);
@@ -36,23 +26,9 @@ namespace Customer_API.Services
             await _context.SaveChangesAsync();
 
             // if initialCredit is not zero -> create a transaction
-            if (initialCredit > 0)
+            if (initialCredit != 0)
             {
-                var transaction = new Transaction
-                {
-                    Amount = initialCredit,
-                    Timestamp = DateTime.UtcNow,
-                };
-
-                // add the transaction to the database
-                _context.Transactions.Add(transaction);
-
-                // link new transaction to the account
-                account.Transactions.Add(transaction);
-
-                // update the account's balance
-                account.Balance += initialCredit;
-                await _context.SaveChangesAsync();
+                await _transactionService.CreateTransactionAsync(account, initialCredit);
             }
 
             return account;

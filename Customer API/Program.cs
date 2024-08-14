@@ -29,6 +29,7 @@ builder.Services.AddSwaggerGen(c =>
 // Register other services
 builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<ITransactionService, TransactionService>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
