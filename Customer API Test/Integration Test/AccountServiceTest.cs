@@ -15,10 +15,6 @@ namespace Customer_API_Test
     [TestFixture]
     public class AccountServiceTests
     {
-        /*        private Mock<DbSet<User>> _mockUsersSet;
-                private Mock<DbSet<Account>> _mockAccountsSet;
-                private Mock<DbSet<Transaction>> _mockTransactionsSet;
-                private Mock<ApplicationDbContext> _mockContext;*/
         private ApplicationDbContext _context;
         private Mock<ITransactionService> _mockTransactionService;
         private AccountService _accountService;
@@ -26,24 +22,8 @@ namespace Customer_API_Test
         [SetUp]
         public void Setup()
         {
-            // Initialize the mocks
-            /*            _mockContext = new Mock<ApplicationDbContext>();
-
-                        // Set up mock DbSets
-                        _mockUsersSet = DbSetMockExtensions.CreateMockDbSet(new List<User>());
-                        _mockAccountsSet = DbSetMockExtensions.CreateMockDbSet(new List<Account>());
-                        _mockTransactionsSet = DbSetMockExtensions.CreateMockDbSet(new List<Transaction>());
-
-                        // Configure the mock context to return mock DbSets
-                        _mockContext.Setup(c => c.Users).Returns(_mockUsersSet.Object);
-                        _mockContext.Setup(c => c.Accounts).Returns(_mockAccountsSet.Object);
-                        _mockContext.Setup(c => c.Transactions).Returns(_mockTransactionsSet.Object);
-
-                        // Setup SaveChangesAsync to return 1
-                        _mockContext.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
-            */
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // unique database name
                 .Options;
 
             _context = new ApplicationDbContext(options);
@@ -53,7 +33,7 @@ namespace Customer_API_Test
             // Setup the Transaction Service
             _mockTransactionService = new Mock<ITransactionService>();
 
-            // Create the AccountService instance with mocks
+            // Create the AccountService instance with mocked transaction service
             _accountService = new AccountService(_context, _mockTransactionService.Object);
         }
 
