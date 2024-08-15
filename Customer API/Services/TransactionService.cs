@@ -3,15 +3,23 @@ using Customer_API.Models;
 
 namespace Customer_API.Services
 {
-    public class TransactionService : ITransactionService
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="context"></param>
+    public class TransactionService(ApplicationDbContext context) : ITransactionService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context = context;
 
-        public TransactionService(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
         public async Task CreateTransactionAsync(Account account, decimal amount)
         {
             var transaction = new Transaction

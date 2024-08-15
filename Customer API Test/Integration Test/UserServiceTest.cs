@@ -26,18 +26,8 @@ namespace Customer_API_Test
 
             _context = new ApplicationDbContext(options);
 
-            //SeedData(_context);
-
             // Create the AccountService instance with mocked transaction service
             _userService = new UserService(_context);
-        }
-
-        private static void SeedData(ApplicationDbContext context)
-        {
-            var user = new User { ID = 1, Name = "John", Surname = "Doe", Accounts = [] };
-            context.Users.Add(user);
-
-            context.SaveChanges(); // Save the changes to the in-memory database
         }
 
         [Test]

@@ -3,11 +3,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Customer_API.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="transactionService"></param>
     public class AccountService(ApplicationDbContext context, ITransactionService transactionService) : IAccountService
     {
         private readonly ApplicationDbContext _context = context;
         private readonly ITransactionService _transactionService = transactionService;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="initialCredit"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public async Task<Account> CreateAccountAsync(int customerId, decimal initialCredit)
         {
             // get user by customerId
@@ -34,11 +46,21 @@ namespace Customer_API.Services
             return account;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
         public async Task<Account> GetAccountAsync(int accountId)
         {
-            return await _context.Accounts.FindAsync(accountId);
+            return await _context.Accounts.Include(a => a.Transactions).FirstOrDefaultAsync(a => a.Id == accountId);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<Transaction>> GetAllTransactions(int accountId)
         {
             // find the account by ID
