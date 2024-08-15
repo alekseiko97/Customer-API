@@ -1,6 +1,7 @@
 using Customer_API;
 using Customer_API.Models;
 using Customer_API.Services;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Configure EF Core to use InMemory database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseInMemoryDatabase("TestDatabase"));
+
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -31,6 +33,22 @@ builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<ITransactionService, TransactionService>();
 var app = builder.Build();
+
+app.UseExceptionHandler(appBuilder =>
+{
+    appBuilder.Run(async context =>
+    {
+        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+        context.Response.ContentType = "application/json";
+        var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+        if (exception != null)
+        {
+            logger.LogError(exception, "Unhandled exception occurred");
+            var result = new { error = "An unexpected error occurred. Please try again later.", exception};
+            await context.Response.WriteAsJsonAsync(result);
+        }
+    });
+});
 
 using (var scope = app.Services.CreateScope())
 {

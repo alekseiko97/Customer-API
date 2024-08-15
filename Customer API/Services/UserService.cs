@@ -28,7 +28,7 @@ namespace Customer_API.Services
 
         public async Task<User> GetUserInfoAsync(int customerId)
         {
-            return await _context.Users.FindAsync(customerId);
+            return await _context.Users.Include(u => u.Accounts).FirstOrDefaultAsync(u => u.ID == customerId);
         }
     }
 }

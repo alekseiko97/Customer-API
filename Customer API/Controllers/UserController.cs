@@ -42,6 +42,15 @@ namespace Customer_API.Controllers
                 return BadRequest("First name and last name are required!");
             }
 
+            // Check whether a user with given first- and last name already exists in the system
+            bool userExists = _userService.GetAllUsersAsync().Result
+                .FirstOrDefault(u => u.Name == firstName && u.Surname == lastName) != null;
+
+            if (userExists)
+            {
+                return BadRequest($"User with first name: {firstName} and last name: {lastName} already exists!");
+            }
+
             var user = await _userService.CreateUserAsync(firstName, lastName);
 
             return CreatedAtAction(nameof(GetUser), new { customerId = user.ID }, user);
