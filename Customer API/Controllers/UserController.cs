@@ -4,6 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Customer_API.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="userService"></param>
     [ApiController]
     [Route("api/v1/users")]
     public class UserController(IUserService userService): ControllerBase
@@ -22,7 +26,7 @@ namespace Customer_API.Controllers
             
             if (user == null)
             {
-                return NotFound();
+                return NotFound($"User with ID {customerId} not found.");
             }
             
             return Ok(user);

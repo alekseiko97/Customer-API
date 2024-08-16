@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Customer_API.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="accountService"></param>
     [ApiController]
     [Route("api/v1/accounts")]
     public class AccountController(IAccountService accountService) : ControllerBase
@@ -19,8 +23,15 @@ namespace Customer_API.Controllers
         [HttpPost]   
         public async Task<IActionResult> CreateAccount([FromQuery] int customerId, [FromQuery] decimal initialBalance)
         {
-            var account = await _accountService.CreateAccountAsync(customerId, initialBalance);
-            return CreatedAtAction(nameof(GetAccount), new { id = account.Id }, account);
+            try
+            {
+                var account = await _accountService.CreateAccountAsync(customerId, initialBalance);
+                return CreatedAtAction(nameof(GetAccount), new { id = account.Id }, account);
+            }
+            catch (KeyNotFoundException knfe)
+            {
+                return NotFound(new { message = knfe.Message });
+            }
         }
 
         /// <summary>
@@ -46,11 +57,18 @@ namespace Customer_API.Controllers
         [HttpGet("{accountId}/transactions")]
         public async Task<IActionResult> GetAllTransaction(int accountId)
         {
-            var transactions = await _accountService.GetAllTransactions(accountId);
+            try
+            {
+                var transactions = await _accountService.GetAllTransactions(accountId);
             
-            if (transactions == null || !transactions.Any()) return NotFound($"No transaction were found for accountId {accountId}");
+                if (transactions == null || !transactions.Any()) return NotFound($"No transaction(s) were found for accountId {accountId}");
 
-            return Ok(transactions);
+                return Ok(transactions);
+            }
+            catch (KeyNotFoundException knfe)
+            {
+                return NotFound(new { message = knfe.Message });
+            }
         }
     }
 }

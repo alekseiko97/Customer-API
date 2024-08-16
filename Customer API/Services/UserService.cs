@@ -7,7 +7,7 @@ namespace Customer_API.Services
     /// 
     /// </summary>
     /// <param name="context"></param>
-    public class UserService(ApplicationDbContext context): IUserService
+    public class UserService(ApplicationDbContext context) : IUserService
     {
         private readonly ApplicationDbContext _context = context;
 
@@ -47,10 +47,38 @@ namespace Customer_API.Services
         /// <returns></returns>
         public async Task<User> GetUserInfoAsync(int customerId)
         {
-            return await _context.Users
+            // Fetch the user with accounts and transactions included
+            var user = await _context.Users
                 .Include(u => u.Accounts)
                 .ThenInclude(a => a.Transactions)
                 .FirstOrDefaultAsync(u => u.ID == customerId);
+
+            if (user == null)
+            {
+                return null; // Will be handled by controller
+            }
+
+            user.Balance = await CalculateUserBalanceAsync(customerId);
+
+            return user;
+        }
+
+        /// <summary>
+        /// Calculate the user's total balance by summing up the balances of all accounts
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        private async Task<decimal> CalculateUserBalanceAsync(int customerId)
+        {
+            var user = await _context.Users
+                .Include(u => u.Accounts) // Eager load the accounts
+                .SingleOrDefaultAsync(u => u.ID == customerId) ?? throw new ArgumentException("User not found", nameof(customerId));
+
+            // Calculate the total balance by summing the balances of all accounts
+            var totalBalance = user.Accounts.Sum(a => a.Balance);
+
+            return totalBalance;
         }
     }
 }

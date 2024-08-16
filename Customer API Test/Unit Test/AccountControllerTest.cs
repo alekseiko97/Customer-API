@@ -29,10 +29,13 @@ namespace Customer_API_Test
         {
             // Arrange
             var customerId = 1;
-            var initialBalance = 100m;
+            var initialBalance = 0;
             var accountId = 1;
-            var account = new Account { Id = accountId, Balance = initialBalance };
 
+            // Create the account object
+            var account = new Account { Id = accountId };
+
+            // Setup the mock for AccountService to return the created account
             _mockAccountService.Setup(service => service.CreateAccountAsync(customerId, initialBalance))
                                .ReturnsAsync(account);
 
@@ -44,8 +47,9 @@ namespace Customer_API_Test
             Assert.Multiple(() =>
             {
                 Assert.That(result.ActionName, Is.EqualTo("GetAccount"));
-                Assert.That(((Account)result.Value).Id, Is.EqualTo(accountId));
-                Assert.That(((Account)result.Value).Balance, Is.EqualTo(initialBalance));
+                var returnedAccount = result.Value as Account;
+                Assert.That(returnedAccount, Is.Not.Null);
+                Assert.That(returnedAccount.Id, Is.EqualTo(accountId));
             });
         }
 
@@ -54,7 +58,7 @@ namespace Customer_API_Test
         {
             // Arrange
             var accountId = 1;
-            var account = new Account { Id = accountId, Balance = 100m };
+            var account = new Account { Id = accountId };
             _mockAccountService.Setup(service => service.GetAccountAsync(accountId))
                                .ReturnsAsync(account);
 

@@ -46,7 +46,7 @@ namespace Customer_API_Test
             _mockUserService.Setup(service => service.GetUserInfoAsync(customerId)).ReturnsAsync((User)null);
 
             // Act
-            var result = await _controller.GetUser(customerId) as NotFoundResult;
+            var result = await _controller.GetUser(customerId) as NotFoundObjectResult;
 
             // Assert
             Assert.That(result, Is.Not.Null);

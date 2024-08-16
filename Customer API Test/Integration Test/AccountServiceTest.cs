@@ -55,6 +55,11 @@ namespace Customer_API_Test
             // Setup the mock to expect the transaction creation
             _mockTransactionService
                 .Setup(service => service.CreateTransactionAsync(It.IsAny<Account>(), initialBalance))
+                 .Callback<Account, decimal>((account, amount) =>
+                  {
+                      // Simulate adding the transaction to the account
+                      account.Transactions.Add(new Transaction { Amount = amount });
+                  })
                 .Returns(Task.CompletedTask);
 
             // Act

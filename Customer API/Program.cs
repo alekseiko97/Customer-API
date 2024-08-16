@@ -52,8 +52,15 @@ app.UseExceptionHandler(appBuilder =>
 
 using (var scope = app.Services.CreateScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    SeedData(dbContext);
+    //var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    var userService = services.GetRequiredService<IUserService>();
+    var accountService = services.GetRequiredService<IAccountService>();
+    var transactionService = services.GetRequiredService<ITransactionService>();
+
+    // Seed the database
+    await SeedData(context, userService, accountService, transactionService);
 }
 
 // Configure the HTTP request pipeline.
@@ -71,32 +78,35 @@ app.MapControllers();
 
 app.Run();
 
-static void SeedData(ApplicationDbContext context)
+static async Task SeedData(ApplicationDbContext context,
+    IUserService userService,
+    IAccountService accountService,
+    ITransactionService transactionService)
 {
-    var user1 = new User { Name = "John", Surname = "Doe" };
-    var user2 = new User { Name = "Jane", Surname = "Smith" };
+    // Create Users
+    var user1 = await userService.CreateUserAsync("John", "Doe");
+    var user2 = await userService.CreateUserAsync("Jane", "Smith");
 
-    var account1 = new Account { Balance = 1000};
-    var account2 = new Account { Balance = 500 };
-    var account3 = new Account { Balance = 1500 };
-    
-    user1.Accounts.Append(account1);
-    user2.Accounts.Append(account2);
-    user1.Accounts.Append(account3);
+    // Create Accounts
+    var account1 = await accountService.CreateAccountAsync(user1.ID, 1000);
+    var account2 = await accountService.CreateAccountAsync(user2.ID, 500);
+    var account3 = await accountService.CreateAccountAsync(user1.ID, 1500);
 
-    var transaction1 = new Transaction { Amount = 500, Timestamp = DateTime.UtcNow };
-    var transaction2 = new Transaction { Amount = 200, Timestamp = DateTime.UtcNow };
-    var transaction3 = new Transaction { Amount = 300, Timestamp = DateTime.UtcNow };
-    var transaction4 = new Transaction { Amount = 100, Timestamp = DateTime.UtcNow };
+    // Create Transactions
+    if (account1 != null)
+    {
+        await transactionService.CreateTransactionAsync(account1, 500);
+        await transactionService.CreateTransactionAsync(account1, 200);
+    }
+    if (account2 != null)
+    {
+        await transactionService.CreateTransactionAsync(account2, 300);
+    }
+    if (account3 != null)
+    {
+        await transactionService.CreateTransactionAsync(account3, 100);
+    }
 
-    account1.Transactions.Add(transaction1);
-    account1.Transactions.Add(transaction2);
-    account2.Transactions.Add(transaction3);
-    account3.Transactions.Add(transaction4);
-
-    context.Accounts.AddRange(account1, account2, account3);
-    context.Users.AddRange(user1, user2);
-    context.Transactions.AddRange(transaction1, transaction2, transaction3, transaction4);
-    
-    context.SaveChanges(); 
+    // Save all changes
+    await context.SaveChangesAsync();
 }

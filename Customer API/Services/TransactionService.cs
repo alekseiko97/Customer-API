@@ -28,7 +28,7 @@ namespace Customer_API.Services
                 Timestamp = DateTime.UtcNow
             };
 
-            account.Transactions.Add(transaction);
+            account.AddTransaction(transaction);
 
             _context.Transactions.Add(transaction);
             await _context.SaveChangesAsync();

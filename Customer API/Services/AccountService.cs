@@ -25,10 +25,10 @@ namespace Customer_API.Services
             // get user by customerId
             var user = await _context.Users
                 .Include(u => u.Accounts)
-                .SingleOrDefaultAsync(u => u.ID == customerId) ?? throw new ArgumentException("User not found", nameof(customerId));
+                .SingleOrDefaultAsync(u => u.ID == customerId) ?? throw new KeyNotFoundException($"User with id {customerId} not found");
 
             // create a new account
-            var account = new Account { Balance = initialCredit };
+            var account = new Account();
 
             // add the account to the user's collection of accounts
             user.Accounts.Add(account);
@@ -66,13 +66,7 @@ namespace Customer_API.Services
             // find the account by ID
             var account = await _context.Accounts
                 .Include(a => a.Transactions) // ensure related transactions are included
-                .SingleOrDefaultAsync(a => a.Id == accountId);
-
-            // check if the account exists
-            if (account == null)
-            {
-                return Enumerable.Empty<Transaction>(); // return an empty collection
-            }
+                .SingleOrDefaultAsync(a => a.Id == accountId) ?? throw new KeyNotFoundException($"Account with id {accountId} doesn't exist");
 
             // return the transactions for the account
             return account.Transactions;
