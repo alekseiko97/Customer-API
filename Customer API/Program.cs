@@ -2,6 +2,7 @@ using Customer_API;
 using Customer_API.Models;
 using Customer_API.Services;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
@@ -34,17 +35,24 @@ builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<ITransactionService, TransactionService>();
 var app = builder.Build();
 
+// Handle exceptions 
 app.UseExceptionHandler(appBuilder =>
 {
     appBuilder.Run(async context =>
     {
         var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
         context.Response.ContentType = "application/json";
+
         var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
         if (exception != null)
         {
             logger.LogError(exception, "Unhandled exception occurred");
-            var result = new { error = "An unexpected error occurred. Please try again later.", exception};
+
+            var result = new
+            {
+                error = "An unexpected error occurred. Please try again later."
+            };
+
             await context.Response.WriteAsJsonAsync(result);
         }
     });
