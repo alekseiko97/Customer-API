@@ -15,7 +15,7 @@ The Customer API provides endpoints for managing users, their accounts, and tran
 - ASP.NET Core
 - Entity Framework Core
 - In-Memory Database for Testing
-- Moq for Unit Testing
+- NUnit and Moq for Unit Testing
 
 ## Setup
 
@@ -102,44 +102,46 @@ static async Task SeedData(ApplicationDbContext context, IUserService userServic
 }
 ```
 
-# API Endpoints
+Note that transactions can only be created by utilizing TransactionService.
 
-## Users
+## API Endpoints
+
+### Users
 ### Create User
-Endpoint: POST /api/v1/users
-Query Parameters: firstName, lastName
-Description: Creates a new user.
+- Endpoint: POST /api/v1/users
+- Query Parameters: firstName, lastName
+- Description: Creates a new user.
 
 ### Get User
-Endpoint: GET /api/v1/users/{id}
-Description: Retrieves a user by ID.
+- Endpoint: GET /api/v1/users/{id}
+- Description: Retrieves a user by ID.
 
-## Accounts
+### Accounts
 ### Create Account
-Endpoint: POST /api/v1/accounts
-Query Parameters: customerId, initialBalance
-Description: Creates a new account with an optional initial balance.
+- Endpoint: POST /api/v1/accounts
+- Query Parameters: customerId, initialBalance
+- Description: Creates a new account with an optional initial balance.
 
 ### Get Account
-Endpoint: GET /api/v1/accounts/{id}
-Description: Retrieves an account by ID.
+- Endpoint: GET /api/v1/accounts/{id}
+- Description: Retrieves an account by ID.
 
 ### Get transactions per account
-Endpoint: GET /api/v1/accounts/{accountId}/transactions
-Description: Retrieves all transactions for account ID.
+- Endpoint: GET /api/v1/accounts/{accountId}/transactions
+- Description: Retrieves all transactions for account ID.
 
-# Testing
+## Testing
 
-## Unit tests cover:
-User creation and validation
-Account creation and transaction recording
-Error handling and response validation
+*** Unit tests cover: ***
+- User creation and validation
+- Account creation and transaction recording
+- Error handling and response validation
 
-## Running Tests
+### Running Tests
 Execute the following command to run all unit tests:
 
 ```bash
 dotnet test
 ```
-# Logging
+## Logging
 Unhandled exceptions are logged using ILogger configured in Program.cs.
