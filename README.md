@@ -2,13 +2,14 @@
 
 ## Overview
 
-The Customer API provides endpoints for managing users, their accounts, and transactions. Key functionalities include creating users, managing accounts, recording transactions, and retrieving user details with account balances and transaction histories.
+The Customer API provides endpoints for managing users, their account(s), and transactions. Key functionalities include creating users, managing accounts, recording transactions, and retrieving user details with account balances and transaction histories.
 
 ## Features
 
 - **User Management**: Create and retrieve user/customer details.
 - **Account Management**: Create accounts and manage transactions.
 - **Transaction Management**: Record transactions and calculate account balances.
+- **Swagger UI**: Simple UI to test the behavior of the endpoints.
 
 ## Technologies
 
@@ -132,7 +133,7 @@ Note that transactions can only be created by utilizing TransactionService.
 
 ## Testing
 
-*** Unit tests cover: ***
+### Unit tests cover:
 - User creation and validation
 - Account creation and transaction recording
 - Error handling and response validation
