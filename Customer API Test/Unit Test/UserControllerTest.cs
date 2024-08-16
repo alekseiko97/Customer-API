@@ -99,5 +99,27 @@ namespace Customer_API_Test
             Assert.That(result, Is.Not.Null);
             Assert.That(result.StatusCode, Is.EqualTo(400)); // bad request
         }
+
+        [Test]
+        public async Task CreateUser_ReturnsBadRequest_WhenUserWithGivenNameExists()
+        {
+            // Arrange
+            var firstName = "John";
+            var lastName = "Doe";
+            var existingUser = new User { ID = 1, Name = firstName, Surname = lastName };
+
+            // Set up the mock to return the newly created user
+            _mockUserService.Setup(service => service.GetAllUsersAsync())
+                            .ReturnsAsync(new List<User> { existingUser });
+
+            // Create user for the first time
+            await _controller.CreateUser(firstName, lastName);
+
+            // Act
+            var result = await _controller.CreateUser(firstName, lastName) as BadRequestObjectResult;
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.StatusCode, Is.EqualTo(400)); // bad request
+        }
     }
 }
